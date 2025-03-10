@@ -1,6 +1,6 @@
 # Biblioteca Municipal
 
-Um aplicativo React Native que permite aos usuários pesquisar e visualizar uma lista de livros usando a Google Books API.
+Um aplicativo React Native que permite aos usuários pesquisar e visualizar uma lista de livros usando a Google Books API. Esse projeto faz parte do trabalhao de extensão da disciplina "Programação para Dispositivos Móveis em Android"
 
 ## Funcionalidades
 
