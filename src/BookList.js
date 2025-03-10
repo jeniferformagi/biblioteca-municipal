@@ -11,7 +11,7 @@ const BookList = ({ navigation }) => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get('https://www.googleapis.com/books/v1/volumes?q=love&maxResults=40');
+        const response = await axios.get('https://www.googleapis.com/books/v1/volumes?q=subject:biography&maxResults=40&orderBy=newest');
         setBooks(response.data.items);
       } catch (error) {
         console.error('Erro ao buscar livros:', error.response ? error.response.data : error.message);
@@ -24,14 +24,17 @@ const BookList = ({ navigation }) => {
   }, []);
 
   const filteredBooks = books.filter(book => {
-    const title = book.volumeInfo.title.toLowerCase();
-    const author = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ').toLowerCase() : '';
-    const categories = book.volumeInfo.categories ? book.volumeInfo.categories.join(', ').toLowerCase() : '';
+    const title = book.volumeInfo.title || '';
+    const author = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : '';
+    const categories = book.volumeInfo.categories ? book.volumeInfo.categories.join(', ') : '';
+    const description = book.volumeInfo.description || '';
+    const imageLinks = book.volumeInfo.imageLinks;
+    const hasEssentialInfo = title && author && categories.length > 0 && description && imageLinks && imageLinks.thumbnail;
+    const containsExcludedTerms = title.toLowerCase().includes('trip') || title.toLowerCase().includes('placar') || title.toLowerCase().includes('lua');
 
-    return (
-      title.includes(filter.toLowerCase()) ||
-      author.includes(filter.toLowerCase()) ||
-      categories.includes(filter.toLowerCase())
+    return hasEssentialInfo && !containsExcludedTerms && (
+      title.toLowerCase().includes(filter.toLowerCase()) ||
+      categories.toLowerCase().includes(filter.toLowerCase())
     );
   });
 
@@ -49,7 +52,7 @@ const BookList = ({ navigation }) => {
       />
       <FlatList
         data={filteredBooks}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => `${item.id}-${index}`}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate('BookDetail', { book: item })}>
             <BookItem book={item} />
