@@ -11,10 +11,11 @@ const BookList = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get('https://openlibrary.org/subjects/love.json?limit=200');
-        setBooks(response.data.works); // Armazena todos os livros sem filtrar por idioma
+        // Ajustando maxResults para 40, que é o máximo permitido
+        const response = await axios.get('https://www.googleapis.com/books/v1/volumes?q=love&maxResults=40');
+        setBooks(response.data.items); // Armazena os livros retornados pela API
       } catch (error) {
-        console.error(error);
+        console.error('Erro ao buscar livros:', error.response ? error.response.data : error.message);
       } finally {
         setLoading(false);
       }
@@ -25,14 +26,14 @@ const BookList = () => {
 
   // Filtragem dos livros com base no texto de entrada
   const filteredBooks = books.filter(book => {
-    const title = book.title.toLowerCase();
-    const author = book.author_name ? book.author_name.join(', ').toLowerCase() : '';
-    const subjects = book.subject ? book.subject.join(', ').toLowerCase() : '';
+    const title = book.volumeInfo.title.toLowerCase();
+    const author = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ').toLowerCase() : '';
+    const categories = book.volumeInfo.categories ? book.volumeInfo.categories.join(', ').toLowerCase() : '';
 
     return (
       title.includes(filter.toLowerCase()) ||
       author.includes(filter.toLowerCase()) ||
-      subjects.includes(filter.toLowerCase())
+      categories.includes(filter.toLowerCase())
     );
   });
 
@@ -50,7 +51,7 @@ const BookList = () => {
       />
       <FlatList
         data={filteredBooks}
-        keyExtractor={(item) => item.key}
+        keyExtractor={(item) => item.id} // Usando o ID do livro como chave
         renderItem={({ item }) => <BookItem book={item} />}
       />
     </View>

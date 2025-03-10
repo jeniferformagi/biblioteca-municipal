@@ -12,17 +12,17 @@ const BookItem = ({ book }) => {
 
   return (
     <View style={styles.container}>
-      {book.cover_id && (
+      {book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail && (
         <Image
-          source={{ uri: `https://covers.openlibrary.org/b/id/${book.cover_id}-M.jpg` }}
+          source={{ uri: book.volumeInfo.imageLinks.thumbnail }}
           style={styles.cover}
         />
       )}
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{book.title}</Text>
-        <Text style={styles.author}>{book.author_name ? book.author_name.join(', ') : 'Autor desconhecido'}</Text>
+        <Text style={styles.title}>{book.volumeInfo.title}</Text>
+        <Text style={styles.author}>{book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Autor desconhecido'}</Text>
         <Text style={styles.category}>
-          {book.subject ? limitText(book.subject.join(', '), 300) : 'Sem categoria'}
+          {book.volumeInfo.categories ? limitText(book.volumeInfo.categories.join(', '), 300) : 'Sem categoria'}
         </Text>
       </View>
     </View>
