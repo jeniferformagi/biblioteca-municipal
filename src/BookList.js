@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Text, View, ActivityIndicator, TextInput, StyleSheet } from 'react-native';
+import { FlatList, Text, View, ActivityIndicator, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import BookItem from './BookItem';
 
-const BookList = () => {
+const BookList = ({ navigation }) => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
@@ -11,9 +11,8 @@ const BookList = () => {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        // Ajustando maxResults para 40, que é o máximo permitido
         const response = await axios.get('https://www.googleapis.com/books/v1/volumes?q=love&maxResults=40');
-        setBooks(response.data.items); // Armazena os livros retornados pela API
+        setBooks(response.data.items);
       } catch (error) {
         console.error('Erro ao buscar livros:', error.response ? error.response.data : error.message);
       } finally {
@@ -24,7 +23,6 @@ const BookList = () => {
     fetchBooks();
   }, []);
 
-  // Filtragem dos livros com base no texto de entrada
   const filteredBooks = books.filter(book => {
     const title = book.volumeInfo.title.toLowerCase();
     const author = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ').toLowerCase() : '';
@@ -42,7 +40,7 @@ const BookList = () => {
   }
 
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
         style={styles.input}
         placeholder="Filtrar por título, autor ou categoria"
@@ -51,20 +49,36 @@ const BookList = () => {
       />
       <FlatList
         data={filteredBooks}
-        keyExtractor={(item) => item.id} // Usando o ID do livro como chave
-        renderItem={({ item }) => <BookItem book={item} />}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => navigation.navigate('BookDetail', { book: item })}>
+            <BookItem book={item} />
+          </TouchableOpacity>
+        )}
+        contentContainerStyle={styles.listContainer}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 0,
+  },
   input: {
     height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
     paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    marginBottom: 10,
+  },
+  listContainer: {
+    paddingBottom: 20,
   },
 });
 

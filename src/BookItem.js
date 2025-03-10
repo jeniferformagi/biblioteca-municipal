@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
 const BookItem = ({ book }) => {
-  // Função para limitar o texto a 300 caracteres
   const limitText = (text, limit) => {
     if (text.length > limit) {
       return text.substring(0, limit) + '...';
@@ -31,20 +30,21 @@ const BookItem = ({ book }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row', // Alinha a imagem e o texto lado a lado
+    flexDirection: 'row',
     marginBottom: 20,
     padding: 10,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+    marginHorizontal: 10,
   },
   cover: {
     width: 100,
     height: 150,
-    marginRight: 10, // Espaço entre a capa e o texto
+    marginRight: 10,
   },
   textContainer: {
-    flex: 1, // Permite que o texto ocupe o espaço restante
+    flex: 1,
   },
   title: {
     fontWeight: 'bold',

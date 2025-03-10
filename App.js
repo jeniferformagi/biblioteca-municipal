@@ -1,19 +1,20 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import BookList from './src/BookList';
+import BookDetail from './src/BookDetail';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <BookList />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="BookList">
+        <Stack.Screen name="BookList" component={BookList} options={{ title: 'Lista de Livros' }} />
+        <Stack.Screen name="BookDetail" component={BookDetail} options={{ title: 'Detalhes do Livro' }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-});
+export default App;
