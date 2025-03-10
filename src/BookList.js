@@ -12,7 +12,7 @@ const BookList = () => {
     const fetchBooks = async () => {
       try {
         const response = await axios.get('https://openlibrary.org/subjects/love.json?limit=200');
-        setBooks(response.data.works);
+        setBooks(response.data.works); // Armazena todos os livros sem filtrar por idioma
       } catch (error) {
         console.error(error);
       } finally {
@@ -23,10 +23,17 @@ const BookList = () => {
     fetchBooks();
   }, []);
 
+  // Filtragem dos livros com base no texto de entrada
   const filteredBooks = books.filter(book => {
     const title = book.title.toLowerCase();
     const author = book.author_name ? book.author_name.join(', ').toLowerCase() : '';
-    return title.includes(filter.toLowerCase()) || author.includes(filter.toLowerCase());
+    const subjects = book.subject ? book.subject.join(', ').toLowerCase() : '';
+
+    return (
+      title.includes(filter.toLowerCase()) ||
+      author.includes(filter.toLowerCase()) ||
+      subjects.includes(filter.toLowerCase())
+    );
   });
 
   if (loading) {
@@ -37,7 +44,7 @@ const BookList = () => {
     <View>
       <TextInput
         style={styles.input}
-        placeholder="Filtrar por título ou autor"
+        placeholder="Filtrar por título, autor ou categoria"
         value={filter}
         onChangeText={setFilter}
       />
